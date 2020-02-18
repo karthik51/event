@@ -35,7 +35,7 @@ namespace Event.Api.Tests
                 'eventLocation': 'TNagar',
                 'isTransportation': true,
                 'poc': 'ram, suresh',
-                'eventRegisterUsers': ['volunteer, test']
+                'eventRegisterUsers': ['user, test, volunteer']
               }";
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
             var request = "/api/v1/events/CreateEvent";
@@ -60,33 +60,19 @@ namespace Event.Api.Tests
             Task<Models.Event> eventInfo = null;
             List<Models.Event> volunteerEvents = GetEventsVolunteer().Result;           
 
-            string json = JsonConvert.SerializeObject(volunteerEvents[0]);
-
-            //string json = @"{    
-            //   'id': volunteerEvents[0].Id,
-            //    'eventTitle': 'Community - Be a Teacher @ Govt Primary School',
-            //    'eventDescription': 'Community - Be a Teacher @ Kamarajar Illam for the school students',
-            //    'eventDate': '2020-02-15T19:24:57.602Z',
-            //    'eventStartTime': '2020-02-15T19:24:57.602Z',
-            //    'eventEndTime': '2020-02-15T19:24:57.602Z',
-            //    'eventLocation': 'TNagar',
-            //    'isTransportation': true,
-            //    'poc': 'ram, suresh',
-            //    'eventRegisterUsers': ['volunteer, test, test1']
-            //  }";
+            string json = JsonConvert.SerializeObject(volunteerEvents[0]);           
             var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-            var request = "/api/v1/events/UpdateEvent";
+            string token = GetJWTToken("user", "User");
+
+            _httpClient.DefaultRequestHeaders.Remove("Authorization");
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            _httpClient.DefaultRequestHeaders.Add("accept", "application/json");
+            var request = "/api/v1/events/UpdateEvent?Id="+ volunteerEvents[0].Id +"&UserId=testuserid&UserName=testusername";
 
             // Act
             var response = await _httpClient.PutAsync(request, httpContent);
 
             // Assert
-            if (response.StatusCode == System.Net.HttpStatusCode.OK)
-            {
-                var responseContent = await response.Content.ReadAsStringAsync();
-                eventInfo = JsonConvert.DeserializeObject<Task<Models.Event>>(responseContent);
-            }
-
             Assert.True(response.StatusCode == System.Net.HttpStatusCode.OK );
         }
 
@@ -121,7 +107,7 @@ namespace Event.Api.Tests
             // Arrange
             List<Models.Event> events = null;
            
-            string token = GetJWTToken("volunteer", "Volunteer");
+            string token = GetJWTToken("user", "User");
 
             _httpClient.DefaultRequestHeaders.Remove("Authorization");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
@@ -145,7 +131,7 @@ namespace Event.Api.Tests
         {
             List<Models.Event> events = null;          
 
-            string token = GetJWTToken("volunteer", "Volunteer");
+            string token = GetJWTToken("user", "User");
 
             _httpClient.DefaultRequestHeaders.Remove("Authorization");
             _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");

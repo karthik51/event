@@ -30,7 +30,7 @@ namespace Event.Api.Models
                
         public string POC { get; set; }
                
-        public User[] RegisterUser { get; set; }
+        public List<User> RegisterUser { get; set; }
 
     }   
 

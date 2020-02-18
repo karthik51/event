@@ -25,17 +25,10 @@ namespace Event.Api.Repository
                             .ToListAsync();
         }
 
-        public Task<List<Models.Event>> GetEventsByVolunteer(string username)
+        public async Task<List<Models.Event>> GetEventsByVolunteer(string username)
         {
-            //FilterDefinition<Models.Event> filter = Builders<Models.Event>.Filter.ElemMatch(m => m.EventRegisterUsers, username);
-            //var filter = Builders<Models.Event>.Filter.AnyEq(m => m.EventRegisterUsers, username);
-            //return _context
-            //        .Events
-            //        .Find(filter)
-            //        .ToListAsync();
-
-           // var filter = Builders<Models.Event>.Filter.In("registerUser.userName", username);
-            var result = _context.Events.Find(_ => true).ToListAsync();
+            var filter = Builders<Models.Event>.Filter.Eq("RegisterUser.UserName", username);
+            var result = await _context.Events.Find(filter).ToListAsync();
             return result;
         }
 
@@ -44,7 +37,7 @@ namespace Event.Api.Repository
             await _context.Events.InsertOneAsync(@event);
         }
 
-        public async Task UpdateEvent(Models.RegisterEvent @registerEvent)
+        public async Task UpdateEvent1(Models.RegisterEvent @registerEvent)
         {
             //int position = @event.RegisterUser.Length - 1;
             //User user = new User();
@@ -55,6 +48,29 @@ namespace Event.Api.Repository
             FilterDefinition<Models.Event> filter = Builders<Models.Event>.Filter.Eq(m => m.Id, @registerEvent.Id);
             var result =  await _context.Events.FindAsync(filter);
            // await _context.Events.ReplaceOneAsync(filter, result);
+        }
+
+        public async Task<bool> UpdateEvent(RegisterEvent registerEvent)
+        {
+            var filter = Builders<Models.Event>.Filter.Eq("Id", registerEvent.Id);
+            var currentEvent = _context.Events.Find(filter).FirstOrDefaultAsync();
+            if (currentEvent.Result == null)
+                return false;
+
+            List<Models.User> updateUser = currentEvent.Result.RegisterUser;
+            if (updateUser == null)
+               updateUser = new List<Models.User>();
+
+            User user = new User();
+            user.UserId = registerEvent.UserId;
+            user.UserName = registerEvent.UserName;
+            updateUser.Add(user);
+
+            var update = Builders<Models.Event>.Update.Set(x => x.RegisterUser, updateUser);                             
+
+            UpdateResult result = await _context.Events.UpdateOneAsync(filter, update);
+            return result.ModifiedCount > 0 && result.IsAcknowledged;
+            
         }
     }
 }
