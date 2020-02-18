@@ -39,7 +39,7 @@ namespace Event.Api.Controllers
             return new ObjectResult(@event);
         }
 
-        // POST: api/v1/CreateEvent
+        // POST: api/v1/events/CreateEvent
         [HttpPost("CreateEvent")]
         [Authorize(Roles = RoleNames.ADMIN)]
         public async Task<IActionResult> Post([FromBody] Models.Event @event)
@@ -48,13 +48,13 @@ namespace Event.Api.Controllers
             return new OkObjectResult(@event);
         }
 
-        // PUT: api/v1/UpdateEvent
+        // PUT: api/v1/events/UpdateEvent
         [HttpPut("UpdateEvent")]
         [Authorize(Roles = RoleNames.USER)]
-        public async Task<IActionResult> Upate(Models.Event @event)
-        {
-            await _eventRepository.UpdateEvent(@event);
-            return new OkObjectResult(@event);
+        public async Task<IActionResult> Upate(RegisterEvent registerEvent)
+        {           
+            await _eventRepository.UpdateEvent(registerEvent);
+            return new OkObjectResult(registerEvent);
         }       
     }
 }

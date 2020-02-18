@@ -11,6 +11,6 @@ namespace Event.Api.Repository
         Task<IEnumerable<Models.Event>> GetAllEvents();
         Task<List<Models.Event>> GetEventsByVolunteer(string name);
         Task CreateEvent(Models.Event @event);
-        Task UpdateEvent(Models.Event @event);
+        Task UpdateEvent(Models.RegisterEvent @event);
     }
 }
