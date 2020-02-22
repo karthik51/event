@@ -36,7 +36,19 @@ namespace Event.Api.Repository
         {
             await _context.Events.InsertOneAsync(@event);
         }
-             
+
+        public async Task UpdateEvent1(Models.RegisterEvent @registerEvent)
+        {
+            //int position = @event.RegisterUser.Length - 1;
+            //User user = new User();
+            //user.UserId = userId;
+            //user.UserName = userName;
+            //@event.RegisterUser.SetValue(user, position);
+
+            FilterDefinition<Models.Event> filter = Builders<Models.Event>.Filter.Eq(m => m.Id, @registerEvent.Id);
+            var result =  await _context.Events.FindAsync(filter);
+           // await _context.Events.ReplaceOneAsync(filter, result);
+        }
 
         public async Task<bool> UpdateEvent(RegisterEvent registerEvent)
         {
