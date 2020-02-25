@@ -56,8 +56,7 @@ namespace Event.Api.Tests
         [Fact]
         public async Task UpdateEvent_PassValidVolunteer_ReturnsEvent()
         {
-            // Arrange
-            Task<Models.Event> eventInfo = null;
+            // Arrange          
             List<Models.Event> volunteerEvents = GetEventsVolunteer().Result;           
 
             string json = JsonConvert.SerializeObject(volunteerEvents[0]);           

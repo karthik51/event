@@ -150,6 +150,7 @@ namespace Event.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Event Api v1");
             });
+            app.UseHttpsRedirection();
             app.UseMvc();
 
         }
